@@ -1,0 +1,19 @@
+measure = load 'input/data2.csv' using PigStorage(';') AS (name:chararray, category:chararray, currency:chararray, launchMonth:float, state:chararray, backers:float, country:chararray, pledged:float, goal:float, lifeTimeDays:float);
+
+nombresProyectos = foreach measure generate name;
+dump nombresProyectos;
+
+proyectosExitosos = filter measure by state == 'successful';
+dump proyectosExitosos;
+
+nombresYFinanciacionConseguidaDeProyectosExitosos = foreach proyectosExitosos generate name, pledged;
+dump nombresYFinanciacionConseguidaDeProyectosExitosos;
+
+nombresYFinanciacionConseguidaDeProyectosExitososOrdenadosPorFinanciacionConseguida = order nombresYFinanciacionConseguidaDeProyectosExitosos by pledged desc;
+dump nombresYFinanciacionConseguidaDeProyectosExitososOrdenadosPorFinanciacionConseguida;
+
+proyectosExitososAgrupadosPorCategoria = group proyectosExitosos by category;
+dump proyectosExitososAgrupadosPorCategoria;
+
+mediaDeObjetivoDeFinanciacionAgrupadosPorCategoriasEnProyectosExitosos =  foreach proyectosExitososAgrupadosPorCategoria generate group, AVG(proyectosExitosos.goal) as measure;
+dump mediaDeObjetivoDeFinanciacionAgrupadosPorCategoriasEnProyectosExitosos;
